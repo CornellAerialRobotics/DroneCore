@@ -28,26 +28,28 @@ public:
     ConnectionResult add_serial_connection(const std::string &dev_path, int baudrate);
 
     const std::vector<uint64_t> &get_device_uuids() const;
-    Device &get_device();
-    Device &get_device(uint64_t uuid);
+    Device &get_autopilot();
+    Device &get_autopilot(uint64_t uuid);
 
-    bool is_connected() const;
+    bool is_autopilot_connected() const;
+#if 0
     bool is_connected(uint64_t uuid) const;
+#endif
 
     void register_on_discover(DroneCore::event_callback_t callback);
     void register_on_timeout(DroneCore::event_callback_t callback);
 
-    void notify_on_discover(uint64_t uuid);
-    void notify_on_timeout(uint64_t uuid);
+    void notify_on_discover(uint64_t uuid, uint8_t component_id);
+    void notify_on_timeout(uint64_t uuid, uint8_t component_id);
 
 private:
-    void create_device_if_not_existing(uint8_t system_id, uint8_t component_id);
+    bool make_new_device(uint8_t ystem_id, uint8_t comp_id);
 
     std::mutex _connections_mutex;
     std::vector<Connection *> _connections;
 
     mutable std::recursive_mutex _devices_mutex;
-    std::map<uint8_t, Device *> _devices;
+    std::map<uint8_t, std::vector<Device *>> _devices;
 
     DroneCore::event_callback_t _on_discover_callback;
     DroneCore::event_callback_t _on_timeout_callback;

@@ -97,16 +97,16 @@ public:
     const std::vector<uint64_t> &device_uuids() const;
 
     /**
-     * @brief Get the first discovered device.
+     * @brief Get the first discovered autopilot device.
      *
-     * This returns the first discovered device or a null device if no device has yet been found.
+     * This returns the first discovered autopilot device or a null device if no device has yet been found.
      *
-     * @return A reference to a device.
+     * @return A reference to an autopilot device.
      */
-    Device &device() const;
+    Device &autopilot() const;
 
     /**
-     * @brief Get the device with the specified UUID.
+     * @brief Get the autopilot device of the given system UUID.
      *
      * This returns a device for a given UUID if such a device has been discovered and a null
      * device otherwise.
@@ -114,27 +114,28 @@ public:
      * @param uuid UUID of device to get.
      * @return A reference to the specified device.
      */
-    Device &device(uint64_t uuid) const;
+    Device &autopilot(uint64_t uuid) const;
 
     /**
      * @brief Callback type for discover and timeout notifications.
      *
      * @param uuid UUID of device (or MAVLink system ID for devices that don't have a UUID).
      */
-    typedef std::function<void(uint64_t uuid)> event_callback_t;
+    typedef std::function<void(uint64_t uuid, uint8_t component_id)> event_callback_t;
 
     /**
-     * @brief Returns `true` if exactly one device is currently connected.
+     * @brief Returns `true` if exactly one autopilot device is currently connected.
      *
-     * Connected means we are receiving heartbeats from this device.
+     * Connected means we are receiving heartbeats from this autopilot device.
      * It means the same as "discovered" and "not timed out".
      *
-     * If multiple devices have connected, this will return `false`.
+     * If multiple autopilot devices have connected, this will return `false`.
      *
-     * @return `true` if exactly one device is connected.
+     * @return `true` if exactly one autopilot device is connected.
      */
-    bool is_connected() const;
+    bool is_autopilot_connected() const;
 
+#if 0
     /**
      * @brief Returns `true` if a device is currently connected.
      *
@@ -145,6 +146,7 @@ public:
      * @return `true` if device is connected.
      */
     bool is_connected(uint64_t uuid) const;
+#endif
 
     /**
      * @brief Register callback for device discovery.

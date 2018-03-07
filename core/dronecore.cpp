@@ -51,11 +51,12 @@ const std::vector<uint64_t> &DroneCore::device_uuids() const
     return _impl->get_device_uuids();
 }
 
-Device &DroneCore::device() const
+Device &DroneCore::autopilot() const
 {
-    return _impl->get_device();
+    return _impl->get_autopilot();
 }
 
+#if 0
 Device &DroneCore::device(const uint64_t uuid) const
 {
     return _impl->get_device(uuid);
@@ -70,6 +71,8 @@ bool DroneCore::is_connected(const uint64_t uuid) const
 {
     return _impl->is_connected(uuid);
 }
+#endif
+
 
 void DroneCore::register_on_discover(const event_callback_t callback)
 {

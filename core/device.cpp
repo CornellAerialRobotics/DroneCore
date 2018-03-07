@@ -166,7 +166,10 @@ void Device::process_heartbeat(const mavlink_message_t &message)
     // We do not call on_discovery here but wait with the notification until we know the UUID.
 
     /* If we don't know the UUID yet, we try to find out. */
-    if (_target_uuid == 0 && !_target_uuid_initialized) {
+    // Lets request autopilot version only from an Autopilot.
+    if (heartbeat.autopilot != MAV_AUTOPILOT_INVALID
+        && _target_uuid == 0
+        && !_target_uuid_initialized) {
         request_autopilot_version();
     }
 
@@ -357,7 +360,7 @@ void Device::set_connected()
 
         if (!_connected && _target_uuid_initialized) {
 
-            _parent->notify_on_discover(_target_uuid);
+            _parent->notify_on_discover(_target_uuid, _target_component_id);
             _connected = true;
 
             register_timeout_handler(std::bind(&Device::heartbeats_timed_out, this),
@@ -389,7 +392,7 @@ void Device::set_disconnected()
         //_heartbeat_timeout_cookie = nullptr;
 
         _connected = false;
-        _parent->notify_on_timeout(_target_uuid);
+        _parent->notify_on_timeout(_target_uuid, _target_component_id);
 
         // Let's reset the flag hope again for the next time we see this target.
         _target_uuid_initialized = false;
