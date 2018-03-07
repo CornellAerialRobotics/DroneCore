@@ -30,7 +30,7 @@ TEST_F(SitlTest, FollowMeOneLocation)
 
     // Wait for device to connect via heartbeat.
     sleep_for(seconds(2));
-    Device &device = dc.device();
+    Device &device = dc.autopilot();
     auto telemetry = std::make_shared<Telemetry>(&device);
     auto follow_me = std::make_shared<FollowMe>(&device);
     auto action = std::make_shared<Action>(&device);
@@ -90,7 +90,7 @@ TEST_F(SitlTest, FollowMeMultiLocationWithConfig)
 
     // Wait for device to connect via heartbeat.
     sleep_for(seconds(2));
-    Device &device = dc.device();
+    Device &device = dc.autopilot();
     auto telemetry = std::make_shared<Telemetry>(&device);
     auto follow_me = std::make_shared<FollowMe>(&device);
     auto action = std::make_shared<Action>(&device);

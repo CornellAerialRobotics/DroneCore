@@ -9,7 +9,8 @@ using namespace dronecore;
 
 static bool _discovered_device = false;
 static uint64_t _uuid = 0;
-static void on_discover(uint64_t uuid);
+static uint8_t _component_id = 0;
+static void on_discover(uint64_t uuid, uint8_t component_id);
 
 static bool _received_arm_result = false;
 static bool _received_takeoff_result = false;
@@ -38,10 +39,12 @@ void receive_kill_result(Action::Result result)
 }
 
 
-void on_discover(uint64_t uuid)
+void on_discover(uint64_t uuid, uint8_t component_id)
 {
-    std::cout << "Found device with UUID: " << uuid << std::endl;
+    std::cout << "Found device with UUID: " << uuid
+              << " Component ID: " << component_id;
     _uuid = uuid;
+    _component_id = component_id;
     _discovered_device = true;
 }
 
@@ -50,11 +53,11 @@ TEST_F(SitlTest, ActionTakeoffAndKill)
     DroneCore dc;
     ASSERT_EQ(dc.add_udp_connection(), ConnectionResult::SUCCESS);
 
-    dc.register_on_discover(std::bind(&on_discover, _1));
+    dc.register_on_discover(std::bind(&on_discover, _1, _2));
     std::this_thread::sleep_for(std::chrono::seconds(5));
     ASSERT_TRUE(_discovered_device);
 
-    Device &device = dc.device();
+    Device &device = dc.autopilot();
     auto telemetry = std::make_shared<Telemetry>(&device);
     auto action = std::make_shared<Action>(&device);
 

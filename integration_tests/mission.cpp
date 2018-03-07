@@ -39,8 +39,9 @@ TEST_F(SitlTest, MissionAddWaypointsAndFly)
         auto future_result = prom->get_future();
 
         LogInfo() << "Waiting to discover device...";
-        dc.register_on_discover([prom](uint64_t uuid) {
-            LogInfo() << "Discovered device with UUID: " << uuid;
+        dc.register_on_discover([prom](uint64_t uuid, uint8_t component_id) {
+            LogInfo() << "Discovered device with UUID: " << uuid
+                      << " Component ID: " << component_id;
             prom->set_value();
         });
 
@@ -50,8 +51,7 @@ TEST_F(SitlTest, MissionAddWaypointsAndFly)
         future_result.get();
     }
 
-
-    Device &device = dc.device();
+    Device &device = dc.autopilot();
     auto telemetry = std::make_shared<Telemetry>(&device);
     auto mission = std::make_shared<Mission>(&device);
     auto action = std::make_shared<Action>(&device);

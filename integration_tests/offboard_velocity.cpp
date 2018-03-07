@@ -20,7 +20,7 @@ TEST_F(SitlTest, OffboardVelocityNED)
     // Wait for device to connect via heartbeat.
     std::this_thread::sleep_for(std::chrono::seconds(2));
 
-    Device &device = dc.device();
+    Device &device = dc.autopilot();
     auto telemetry = std::make_shared<Telemetry>(&device);
     auto action = std::make_shared<Action>(&device);
     auto offboard = std::make_shared<Offboard>(&device);
@@ -116,7 +116,7 @@ TEST_F(SitlTest, OffboardVelocityBody)
 
     // Wait for device to connect via heartbeat.
     std::this_thread::sleep_for(std::chrono::seconds(2));
-    Device &device = dc.device();
+    Device &device = dc.autopilot();
 
     auto telemetry = std::make_shared<Telemetry>(&device);
     auto action = std::make_shared<Action>(&device);

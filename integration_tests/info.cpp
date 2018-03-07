@@ -4,8 +4,9 @@
 #include "plugins/info/info.h"
 
 using namespace dronecore;
+using namespace std::placeholders;
 
-static void on_discover(uint64_t uuid);
+static void on_discover(uint64_t uuid, uint8_t component_id);
 static bool _discovered_device = false;
 
 TEST_F(SitlTest, Info)
@@ -15,16 +16,14 @@ TEST_F(SitlTest, Info)
     ConnectionResult ret = dc.add_udp_connection();
     ASSERT_EQ(ret, ConnectionResult::SUCCESS);
 
-    dc.register_on_discover(std::bind(&on_discover, std::placeholders::_1));
+    dc.register_on_discover(std::bind(&on_discover, _1, _2));
 
     while (!_discovered_device) {
         std::cout << "waiting for device to appear..." << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 
-
-    Device &device = dc.device();
-    auto info = std::make_shared<Info>(&device);
+    auto info = std::make_shared<Info>(&dc.autopilot());
 
     for (unsigned i = 0; i < 3; ++i) {
         Info::Version version = info->get_version();
@@ -59,8 +58,9 @@ TEST_F(SitlTest, Info)
     }
 }
 
-void on_discover(uint64_t uuid)
+void on_discover(uint64_t uuid, uint8_t component_id)
 {
-    std::cout << "Found device with UUID: " << uuid << std::endl;
+    std::cout << "Found device with component ID " << component_id
+              << " on vehicle whose UUID: " << uuid << std::endl;
     _discovered_device = true;
 }

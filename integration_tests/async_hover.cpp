@@ -26,13 +26,12 @@ TEST_F(SitlTest, ActionAsyncHover)
     std::this_thread::sleep_for(std::chrono::seconds(2));
 
     // TODO: this test is pretty dumb, should be improved with more checks.
-    Device &device = dc.device();
+    auto telemetry = std::make_shared<Telemetry>(&dc.autopilot());
 
-    auto telemetry = std::make_shared<Telemetry>(&device);
     telemetry->health_all_ok_async(std::bind(&receive_health_all_ok, _1));
     telemetry->in_air_async(std::bind(&receive_in_air, _1));
 
-    auto action = std::make_shared<Action>(&device);
+    auto action = std::make_shared<Action>(&dc.autopilot());
 
     while (!_all_ok) {
         std::cout << "Waiting to be ready..." << std::endl;

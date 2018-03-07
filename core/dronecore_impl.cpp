@@ -275,29 +275,29 @@ Device &DroneCoreImpl::get_autopilot()
     return *_devices[system_id][component_id];
 }
 
-#if 0
-Device &DroneCoreImpl::get_device(const uint64_t uuid)
+Device &DroneCoreImpl::get_autopilot(const uint64_t uuid)
 {
     {
         std::lock_guard<std::recursive_mutex> lock(_devices_mutex);
         // TODO: make a cache map for this.
-        for (auto device : _devices) {
-            if (device.second->get_target_uuid() == uuid) {
-                return *device.second;
-            }
+        for (auto system_it = _devices.begin(); system_it != _devices.end(); ++system_it) {
+            for (auto component : system_it->second)
+                if (component->get_target_uuid() == uuid &&
+                    component->get_target_component_id() == MAV_COMP_ID_AUTOPILOT1) {
+                    return *component;
+                }
         }
+
+        // We have not found a device with this UUID.
+        // TODO: this is an error condition that we ought to handle properly.
+        LogErr() << "NO autopilot in UUID: " << uuid;
+
+        // Create a dummy
+        uint8_t system_id = 0, component_id = 0;
+        make_new_device(system_id, component_id);
+        return *_devices[system_id][component_id];
     }
-
-    // We have not found a device with this UUID.
-    // TODO: this is an error condition that we ought to handle properly.
-    LogErr() << "device with UUID: " << uuid << " not found";
-
-    // Create a dummy
-    uint8_t system_id = 0, component_id = 0;
-    create_device_if_not_existing(system_id, component_id);
-    return *_devices[system_id];
 }
-#endif
 
 bool DroneCoreImpl::is_autopilot_connected() const
 {
@@ -312,19 +312,19 @@ bool DroneCoreImpl::is_autopilot_connected() const
     return false;
 }
 
-#if 0
-bool DroneCoreImpl::is_connected(const uint64_t uuid) const
+bool DroneCoreImpl::is_autopilot_connected(uint64_t uuid) const
 {
     std::lock_guard<std::recursive_mutex> lock(_devices_mutex);
 
-    for (auto it = _devices.begin(); it != _devices.end(); ++it) {
-        if (it->second->get_target_uuid() == uuid) {
-            return it->second->is_connected();
-        }
+    if (_devices.size() == 1) {
+        for (auto component : _devices.begin()->second)
+            if (component->get_target_uuid() == uuid &&
+                component->get_target_component_id() == MAV_COMP_ID_AUTOPILOT1) {
+                return component->is_connected();
+            }
     }
     return false;
 }
-#endif
 
 bool DroneCoreImpl::make_new_device(uint8_t system_id, uint8_t comp_id)
 {

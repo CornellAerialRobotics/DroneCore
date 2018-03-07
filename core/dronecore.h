@@ -135,7 +135,6 @@ public:
      */
     bool is_autopilot_connected() const;
 
-#if 0
     /**
      * @brief Returns `true` if a device is currently connected.
      *
@@ -145,8 +144,7 @@ public:
      * @param uuid UUID of device to check.
      * @return `true` if device is connected.
      */
-    bool is_connected(uint64_t uuid) const;
-#endif
+    bool is_autopilot_connected(uint64_t uuid) const;
 
     /**
      * @brief Register callback for device discovery.

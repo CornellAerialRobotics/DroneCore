@@ -35,11 +35,10 @@ void takeoff_and_hover_at_altitude(float altitude_m)
 
     // Wait for device to connect via heartbeat.
     std::this_thread::sleep_for(std::chrono::seconds(2));
-    ASSERT_TRUE(dc.is_connected());
+    ASSERT_TRUE(dc.is_autopilot_connected());
 
-    Device &device = dc.device();
-    auto telemetry = std::make_shared<Telemetry>(&device);
-    auto action = std::make_shared<Action>(&device);
+    auto telemetry = std::make_shared<Telemetry>(&dc.autopilot());
+    auto action = std::make_shared<Action>(&dc.autopilot());
 
     int iteration = 0;
     while (!telemetry->health_all_ok()) {

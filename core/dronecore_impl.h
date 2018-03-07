@@ -32,9 +32,7 @@ public:
     Device &get_autopilot(uint64_t uuid);
 
     bool is_autopilot_connected() const;
-#if 0
-    bool is_connected(uint64_t uuid) const;
-#endif
+    bool is_autopilot_connected(uint64_t uuid) const;
 
     void register_on_discover(DroneCore::event_callback_t callback);
     void register_on_timeout(DroneCore::event_callback_t callback);

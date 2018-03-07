@@ -62,9 +62,7 @@ TEST_F(SitlTest, TelemetryAsync)
 
     ASSERT_EQ(ret, ConnectionResult::SUCCESS);
 
-    Device &device = dc.device(uuid);
-
-    auto telemetry = std::make_shared<Telemetry>(&device);
+    auto telemetry = std::make_shared<Telemetry>(&dc.autopilot(uuid));
 
     telemetry->set_rate_position_async(10.0, std::bind(&receive_result, _1));
     std::this_thread::sleep_for(std::chrono::milliseconds(100));

@@ -56,22 +56,20 @@ Device &DroneCore::autopilot() const
     return _impl->get_autopilot();
 }
 
-#if 0
-Device &DroneCore::device(const uint64_t uuid) const
+Device &DroneCore::autopilot(uint64_t uuid) const
 {
-    return _impl->get_device(uuid);
+    return _impl->get_autopilot(uuid);
 }
 
-bool DroneCore::is_connected() const
+bool DroneCore::is_autopilot_connected() const
 {
-    return _impl->is_connected();
+    return _impl->is_autopilot_connected();
 }
 
-bool DroneCore::is_connected(const uint64_t uuid) const
+bool DroneCore::is_autopilot_connected(uint64_t uuid) const
 {
-    return _impl->is_connected(uuid);
+    return _impl->is_autopilot_connected(uuid);
 }
-#endif
 
 
 void DroneCore::register_on_discover(const event_callback_t callback)
