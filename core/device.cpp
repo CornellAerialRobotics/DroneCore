@@ -167,9 +167,12 @@ void Device::process_heartbeat(const mavlink_message_t &message)
 
     /* If we don't know the UUID yet, we try to find out. */
     // Lets request autopilot version only from an Autopilot.
-    if (heartbeat.autopilot != MAV_AUTOPILOT_INVALID
-        && _target_uuid == 0
-        && !_target_uuid_initialized) {
+    if (heartbeat.autopilot == MAV_AUTOPILOT_INVALID &&
+        _target_uuid == 0 && !_target_uuid_initialized) {
+        // For Non-Autopilot components, lets fill UUID by ourself.
+        _target_uuid_initialized = true;
+        _target_uuid = message.sysid;
+    } else if (_target_uuid == 0 && !_target_uuid_initialized) {
         request_autopilot_version();
     }
 

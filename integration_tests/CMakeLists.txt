@@ -15,6 +15,7 @@ add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} --verbose)
 # This includes all GTests that run integration tests
 add_executable(integration_tests_runner
     ../core/unittests_main.cpp
+    multi_component_discovery.cpp
     simple_connect.cpp
     async_connect.cpp
     telemetry_simple.cpp
