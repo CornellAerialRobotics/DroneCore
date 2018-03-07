@@ -5,6 +5,7 @@ add_library(dronecore_example SHARED
 
 include_directories(
     ${CMAKE_SOURCE_DIR}/core
+    ${CMAKE_SOURCE_DIR}/external_example/
     SYSTEM ${CMAKE_SOURCE_DIR}/third_party/mavlink/include
 )
 

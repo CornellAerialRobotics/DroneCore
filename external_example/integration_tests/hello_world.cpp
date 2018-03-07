@@ -15,9 +15,9 @@ TEST_F(SitlTest, ExampleHello)
 
     // Wait for device to connect via heartbeat.
     std::this_thread::sleep_for(std::chrono::seconds(2));
-    ASSERT_TRUE(dc.is_connected());
+    ASSERT_TRUE(dc.is_autopilot_connected());
 
-    Device &device = dc.device();
+    Device &device = dc.autopilot();
     auto example = std::make_shared<Example>(&device);
 
     // Apparently it can say hello.
