@@ -57,8 +57,9 @@ int main(int /*argc*/, char ** /*argv*/)
         auto future_result = prom->get_future();
 
         std::cout << "Waiting to discover device..." << std::endl;
-        dc.register_on_discover([prom](uint64_t uuid) {
-            std::cout << "Discovered device with UUID: " << uuid << std::endl;
+        dc.register_on_discover([prom](uint64_t uuid, uint8_t component_id) {
+            std::cout << "Discovered device with UUID: " << uuid
+                      << "Component ID: " << int(component_id) << std::endl;
             prom->set_value();
         });
 
@@ -68,8 +69,10 @@ int main(int /*argc*/, char ** /*argv*/)
         future_result.get();
     }
 
-    dc.register_on_timeout([](uint64_t uuid) {
-        std::cout << "Device with UUID timed out: " << uuid << std::endl;
+    dc.register_on_timeout([](uint64_t uuid, uint8_t component_id) {
+        std::cout << "Device with UUID: " << uuid
+                  << " and Component ID: " << int(component_id)
+                  << " timed out: " << std::endl;
         std::cout << "Exiting." << std::endl;
         exit(0);
     });
@@ -77,7 +80,7 @@ int main(int /*argc*/, char ** /*argv*/)
     // We don't need to specifiy the UUID if it's only one device anyway.
     // If there were multiple, we could specify it with:
     // dc.device(uint64_t uuid);
-    Device &device = dc.device();
+    Device &device = dc.autopilot();
     std::shared_ptr<Action> action = std::make_shared<Action>(&device);
     std::shared_ptr<Mission> mission = std::make_shared<Mission>(&device);
     std::shared_ptr<Telemetry> telemetry = std::make_shared<Telemetry>(&device);

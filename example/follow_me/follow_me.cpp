@@ -43,13 +43,13 @@ int main(int, char **)
     connection_error_exit(conn_result, "Connection failed");
 
     // Wait for the device to connect via heartbeat
-    while (!dc.is_connected()) {
+    while (!dc.is_autopilot_connected()) {
         std::cout << "Wait for device to connect via heartbeat" << std::endl;
         sleep_for(seconds(1));
     }
 
     // Device got discovered.
-    Device &device = dc.device();
+    Device &device = dc.autopilot();
     std::shared_ptr<Action> action = std::make_shared<Action>(&device);
     std::shared_ptr<FollowMe> follow_me = std::make_shared<FollowMe>(&device);
     std::shared_ptr<Telemetry> telemetry = std::make_shared<Telemetry>(&device);

@@ -31,8 +31,9 @@ int main(int /*argc*/, char ** /*argv*/)
     }
 
     std::cout << "Waiting to discover device..." << std::endl;
-    dc.register_on_discover([&discovered_device](uint64_t uuid) {
-        std::cout << "Discovered device with UUID: " << uuid << std::endl;
+    dc.register_on_discover([&discovered_device](uint64_t uuid, uint8_t component_id) {
+        std::cout << "Discovered device with UUID: " << uuid
+                  << "Component ID: " << int(component_id) << std::endl;
         discovered_device = true;
     });
 
@@ -47,7 +48,7 @@ int main(int /*argc*/, char ** /*argv*/)
     // We don't need to specify the UUID if it's only one device anyway.
     // If there were multiple, we could specify it with:
     // dc.device(uint64_t uuid);
-    Device &device = dc.device();
+    Device &device = dc.autopilot();
     std::shared_ptr<Telemetry> telemetry = std::make_shared<Telemetry>(&device);
 
     // We want to listen to the altitude of the drone at 1 Hz.
