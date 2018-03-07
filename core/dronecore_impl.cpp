@@ -74,7 +74,7 @@ void DroneCoreImpl::receive_message(const mavlink_message_t &message)
         _devices.insert(std::pair<uint8_t, Device *>(message.sysid, null_device));
     }
 
-    create_device_if_not_existing(message.sysid);
+    create_device_if_not_existing(message.sysid, message.compid);
 
     if (_should_exit) {
         // Don't try to call at() if devices have already been destroyed
@@ -262,8 +262,8 @@ Device &DroneCoreImpl::get_device()
             return *_devices.begin()->second;
         } else {
             LogErr() << "Error: no device found.";
-            uint8_t system_id = 0;
-            create_device_if_not_existing(system_id);
+            uint8_t system_id = 0, component_id = 0;
+            create_device_if_not_existing(system_id, component_id);
             return *_devices[system_id];
         }
     }
@@ -286,9 +286,8 @@ Device &DroneCoreImpl::get_device(const uint64_t uuid)
     LogErr() << "device with UUID: " << uuid << " not found";
 
     // Create a dummy
-    uint8_t system_id = 0;
-    create_device_if_not_existing(system_id);
-
+    uint8_t system_id = 0, component_id = 0;
+    create_device_if_not_existing(system_id, component_id);
     return *_devices[system_id];
 }
 
@@ -314,7 +313,7 @@ bool DroneCoreImpl::is_connected(const uint64_t uuid) const
     return false;
 }
 
-void DroneCoreImpl::create_device_if_not_existing(const uint8_t system_id)
+void DroneCoreImpl::create_device_if_not_existing(uint8_t system_id, uint8_t comp_id)
 {
     std::lock_guard<std::recursive_mutex> lock(_devices_mutex);
 
@@ -330,7 +329,7 @@ void DroneCoreImpl::create_device_if_not_existing(const uint8_t system_id)
     }
 
     // Create both lists in parallel
-    Device *new_device = new Device(this, system_id);
+    Device *new_device = new Device(this, system_id, comp_id);
     _devices.insert(std::pair<uint8_t, Device *>(system_id, new_device));
 }
 

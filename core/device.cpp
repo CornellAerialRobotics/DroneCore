@@ -15,8 +15,10 @@ namespace dronecore {
 using namespace std::placeholders; // for `_1`
 
 Device::Device(DroneCoreImpl *parent,
-               uint8_t target_system_id) :
+               uint8_t target_system_id,
+               uint8_t target_component_id) :
     _target_system_id(target_system_id),
+    _target_component_id(target_component_id),
     _parent(parent),
     _params(this),
     _commands(this),
@@ -29,9 +31,11 @@ Device::Device(DroneCoreImpl *parent,
         MAVLINK_MSG_ID_HEARTBEAT,
         std::bind(&Device::process_heartbeat, this, _1), this);
 
-    register_mavlink_message_handler(
-        MAVLINK_MSG_ID_AUTOPILOT_VERSION,
-        std::bind(&Device::process_autopilot_version, this, _1), this);
+    // Request for Autopilot version, only if its Autopilot
+    if (_target_component_id == MAV_COMP_ID_AUTOPILOT1)
+        register_mavlink_message_handler(
+            MAVLINK_MSG_ID_AUTOPILOT_VERSION,
+            std::bind(&Device::process_autopilot_version, this, _1), this);
 
     register_mavlink_message_handler(
         MAVLINK_MSG_ID_STATUSTEXT,
